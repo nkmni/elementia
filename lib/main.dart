@@ -9,6 +9,7 @@ import 'screens/quiz_view.dart';
 import 'screens/match_view.dart';
 import 'screens/find_it_view.dart';
 import 'screens/trend_view.dart';
+import 'screens/neighbors_view.dart';
 
 void main() {
   runApp(
@@ -74,6 +75,7 @@ class MainScaffold extends StatelessWidget {
       case AppMode.match: return const MatchView();
       case AppMode.findIt: return const FindItView();
       case AppMode.trend: return const TrendView();
+      case AppMode.neighbors: return const NeighborsView(); // Added Neighbors View case
       default: return const Dashboard();
     }
   }

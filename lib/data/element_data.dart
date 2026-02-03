@@ -10,6 +10,8 @@ class ElementData {
   final List<int> oxidationStates;
   final String summary;
   final String electronicConfiguration;
+  final String? colorDescription;
+  final String? hexColor;
 
   const ElementData({
     required this.atomicNumber,
@@ -23,5 +25,7 @@ class ElementData {
     required this.oxidationStates,
     required this.summary,
     required this.electronicConfiguration,
+    this.colorDescription,
+    this.hexColor,
   });
 }

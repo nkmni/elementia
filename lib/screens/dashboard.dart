@@ -49,6 +49,12 @@ class Dashboard extends StatelessWidget {
                     desc: 'Test your knowledge with multiple choice.',
                     onTap: () => context.read<AppState>().setMode(AppMode.quiz),
                   ),
+                   _ModeCard(
+                    icon: '🪐',
+                    title: 'Orbit Mode',
+                    desc: 'Identify surrounding neighbors.',
+                    onTap: () => context.read<AppState>().setMode(AppMode.neighbors),
+                  ),
                   _ModeCard(
                     icon: '🧩',
                     title: 'Match Game',

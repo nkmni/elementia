@@ -35,9 +35,12 @@ class MatchView extends StatelessWidget {
                 final tile = state.matchTiles[index];
                 if (tile.isMatched) return const SizedBox.shrink();
 
-                final isSelected = context.select<AppState, bool>((s) => s.selectedMatchTiles.contains(tile));
-
-                return _TileWidget(tile: tile, isSelected: isSelected);
+                return Builder(
+                  builder: (context) {
+                    final isSelected = context.select<AppState, bool>((s) => s.selectedMatchTiles.contains(tile));
+                    return _TileWidget(tile: tile, isSelected: isSelected);
+                  }
+                );
               },
             ),
           ),

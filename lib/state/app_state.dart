@@ -38,6 +38,8 @@ class AppState extends ChangeNotifier {
   Timer? _matchTimer;
   
   List<MatchTile> get matchTiles => _matchTiles;
+  List<MatchTile> get selectedMatchTiles => _selectedTiles;
+  
   String get matchTimeDisplay {
     final m = (_matchSeconds ~/ 60).toString().padLeft(2, '0');
     final s = (_matchSeconds % 60).toString().padLeft(2, '0');
@@ -53,6 +55,9 @@ class AppState extends ChangeNotifier {
   ElementData? get findTarget => _findTarget;
   String get findMessage => _findMessage;
   bool get findSuccess => _findSuccess;
+  
+  // F-Block helper for Find It
+  bool isFBlock(ElementData e) => e.group == null;
 
   // Trend Master
   int _trendStreak = 0;

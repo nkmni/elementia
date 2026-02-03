@@ -21,27 +21,35 @@ class FlashcardsView extends StatelessWidget {
           const SizedBox(height: 24),
           Expanded(
             child: Center(
-              child: GestureDetector(
-                onTap: () => context.read<AppState>().flipFlashcard(),
-                child: TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: state.isFlipped ? 180 : 0),
-                  duration: const Duration(milliseconds: 600),
-                  builder: (context, double val, child) {
-                    final isBack = val >= 90;
-                    return Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateY(val * pi / 180),
-                      child: isBack
-                          ? Transform(
-                              alignment: Alignment.center,
-                              transform: Matrix4.identity()..rotateY(pi),
-                              child: _buildBack(state.currentFlashcard),
-                            )
-                          : _buildFront(state.currentFlashcard),
-                    );
-                  },
+              child: MouseRegion(
+                onEnter: (_) {
+                   if (!state.isFlipped) context.read<AppState>().flipFlashcard();
+                },
+                onExit: (_) {
+                   if (state.isFlipped) context.read<AppState>().flipFlashcard();
+                },
+                child: GestureDetector(
+                  onTap: () => context.read<AppState>().flipFlashcard(),
+                  child: TweenAnimationBuilder(
+                    tween: Tween<double>(begin: 0, end: state.isFlipped ? 180 : 0),
+                    duration: const Duration(milliseconds: 600),
+                    builder: (context, double val, child) {
+                      final isBack = val >= 90;
+                      return Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, 0.001)
+                          ..rotateY(val * pi / 180),
+                        child: isBack
+                            ? Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.identity()..rotateY(pi),
+                                child: _buildBack(state.currentFlashcard),
+                              )
+                            : _buildFront(state.currentFlashcard),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

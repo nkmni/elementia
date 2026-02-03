@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/app_state.dart';
+import '../data/element_data.dart'; // Added import
 import '../widgets/glass_container.dart';
 import '../theme/app_theme.dart';
 
@@ -35,58 +36,98 @@ class FindItView extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                    width: 1000,
-                   // Grid representation
-                   child: GridView.builder(
-                     physics: const NeverScrollableScrollPhysics(),
-                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                       crossAxisCount: 18,
-                       crossAxisSpacing: 2,
-                       mainAxisSpacing: 2,
-                     ),
-                     itemCount: 18 * 10, // 18 groups x 10 rows (approx)
-                     itemBuilder: (context, index) {
-                       // Map index to Group/Period
-                       final row = index ~/ 18; // 0-based period index (roughly)
-                       final col = index % 18;  // 0-based group index
-                       
-                       // Simple mapping: Period = row + 1, Group = col + 1
-                       final p = row + 1;
-                       final g = col + 1;
-                       
-                       // Check if an element exists at this coordinate
-                       final el = state.elements.firstWhere(
-                         (e) => e.period == p && e.group == g,
-                         orElse: () => state.elements[0], // fallback
-                       );
-                       
-                       // Hacky check if it's actually that element (by checking if we found default and if default matches coords)
-                       // Better: use `where` and check length
-                       final exists = state.elements.any((e) => e.period == p && e.group == g);
-                       
-                       if (!exists) return const SizedBox.shrink(); // Empty space
-                       
-                       final actualEl = state.elements.firstWhere((e) => e.period == p && e.group == g);
-
-                       return GestureDetector(
-                         onTap: () => context.read<AppState>().checkFindItLocation(actualEl.atomicNumber),
-                         child: Container(
-                           decoration: BoxDecoration(
-                             color: Colors.white10,
-                             border: Border.all(color: Colors.white24),
-                             borderRadius: BorderRadius.circular(2),
-                           ),
-                           // Intentionally empty or just number? Game is "Find It" so usually blank or number.
-                           // Let's show nothing to make it harder, or just atomic number?
-                           // Walkthrough said "Blank Table".
+                   child: Column(
+                     children: [
+                       // Main Body (18x7)
+                       GridView.builder(
+                         shrinkWrap: true,
+                         physics: const NeverScrollableScrollPhysics(),
+                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                           crossAxisCount: 18,
+                           crossAxisSpacing: 4,
+                           mainAxisSpacing: 4,
                          ),
-                       );
-                     },
+                         itemCount: 18 * 7, 
+                         itemBuilder: (context, index) {
+                           final row = index ~/ 18;
+                           final col = index % 18;
+                           final p = row + 1;
+                           final g = col + 1;
+                           
+                           // Check if valid coord
+                           // Standard periodic table holes:
+                           // Period 1: Only G1, G18
+                           if (p == 1 && (g > 1 && g < 18)) return const SizedBox.shrink();
+                           // Period 2,3: Only G1,2 and G13-18
+                           if ((p == 2 || p == 3) && (g > 2 && g < 13)) return const SizedBox.shrink();
+                           
+                           final el = state.elements.firstWhere(
+                             (e) => e.period == p && e.group == g,
+                             orElse: () => ElementData(atomicNumber: -1, symbol: '', name: '', atomicMass: '', category: '', period: 0, oxidationStates: [], summary: '', electronicConfiguration: ''),
+                           );
+                           
+                           if (el.atomicNumber == -1) return const SizedBox.shrink();
+
+                           return _ElementCell(
+                             symbol: el.atomicNumber.toString(), 
+                             color: Colors.white10,
+                             onTap: () => context.read<AppState>().checkFindItLocation(el.atomicNumber),
+                           );
+                         },
+                       ),
+                       const SizedBox(height: 16),
+                       // F-Block (Lanthanides/Actinides)
+                       // Just a simple row for now as we might not have full data, but logic supports it
+                       const Text('Lanthanides & Actinides', style: TextStyle(color: Colors.white54)),
+                       const SizedBox(height: 8),
+                       Wrap(
+                         spacing: 4,
+                         runSpacing: 4,
+                         alignment: WrapAlignment.center,
+                         children: state.elements.where((e) => state.isFBlock(e)).map((e) {
+                           return SizedBox(
+                             width: 45, // approx grid cell width
+                             height: 45,
+                             child: _ElementCell(
+                               symbol: e.atomicNumber.toString(),
+                               color: Colors.white10,
+                               onTap: () => context.read<AppState>().checkFindItLocation(e.atomicNumber),
+                             ),
+                           );
+                         }).toList(),
+                       )
+                     ],
                    ),
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ElementCell extends StatelessWidget {
+  final String symbol;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ElementCell({required this.symbol, required this.color, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.white24),
+        ),
+        child: Center(
+          child: Text(symbol, style: const TextStyle(fontSize: 10, color: Colors.white70)),
+        ),
       ),
     );
   }

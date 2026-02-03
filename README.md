@@ -1,6 +1,6 @@
-# elementia
+# Elementia
 
-A new Flutter project.
+Game to memorize The Periodic Table of Elements.
 
 ## Getting Started
 

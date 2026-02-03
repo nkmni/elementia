@@ -130,14 +130,14 @@ class PeriodicTableGrid extends StatelessWidget {
           ),
           if (showBarrier)
             Positioned(
-              right: -3, 
+              right: -2, 
               top: 0,
               bottom: 0,
               child: Container(
-                width: 4,
+                width: 2,
                 decoration: BoxDecoration(
-                  color: Colors.amberAccent,
-                  borderRadius: BorderRadius.circular(2),
+                  color: Colors.white54,
+                  borderRadius: BorderRadius.circular(1),
                 ),
               ),
             ),

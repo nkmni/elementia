@@ -1,2 +1,2 @@
 # elementia
-Game to memorize The Periodic Table of Elements"
+Game to memorize The Periodic Table of Elements
